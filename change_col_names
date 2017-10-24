@@ -1,0 +1,14 @@
+# Add this code to change the columns names to probes_names
+with open('clinical_gene.csv', 'r') as file:
+    wrong_col_names = file.readline().split('|')
+    gene_names = file.readline().split('|')
+    third_line = file.readline().split('|')
+    probes_names = file.readline().split('|')
+
+# Create a dictionary with old columns as key and the probes names as the values.
+col_dictionary = dict(zip(wrong_col_names[5:], probes_names[5:]))
+del wrong_col_names, ,third_line, probes_names
+
+
+# Edit according to the data frame name
+df.rename(columns= col_dictionary, inplace=True)
