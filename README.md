@@ -1,4 +1,4 @@
-# ProgrammingI_Leukemia_analysis
+# Programming_I_Leukemia_analysis
 ## Course project bioinformatics programming I
 
 ### Files description
