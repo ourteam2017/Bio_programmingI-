@@ -1,4 +1,4 @@
-#this is the script to get the merged_df, training/test sets and cox-score for 21148 genes
+#this is the script to get the merged_df. To do stratified random sampling for  training/test sets see sampling_the_data.py
 
 import pandas as pd
 import numpy as np
