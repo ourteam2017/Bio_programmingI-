@@ -13,7 +13,7 @@ After normalization and filter
 
 #### Violin Box Plot
 
-![](Untitled_files/figure-markdown_github-ascii_identifiers/pressure-1.png)
+![](images/gene_expression_distribution.png)
 
 ### Distribution by Probe names
 
