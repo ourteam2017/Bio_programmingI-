@@ -1,4 +1,5 @@
 import random
+random.seed(1)
 a = [4,14,47,60,7,24,51]
 b = [[],[],[],[],[],[],[]]
 c = [[],[],[],[],[]]
@@ -12,6 +13,7 @@ for i in range(len(a)):
 ## arrange 5*(a[i]/5) elements
 for j in range(5):
     for i in range(len(a)):
+        random.seed(1)
         x = random.sample(b[i],a[i]/5)
             
         for key in x:
@@ -21,10 +23,12 @@ for j in range(5):
 ## arrange the rest elements       
 b.sort(lambda x,y: cmp(len(x), len(y)),reverse=True)   
 for key in b:
+    random.seed(1)
     random.shuffle(key)
     for i in range(len(key)):
         c[i].append(key[i])
     c.sort(lambda x,y: cmp(len(x), len(y)))
 
 for key in c:
-    print len(key)
+    key.sort(lambda x,y:cmp(x,y))
+    print key
