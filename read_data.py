@@ -7,7 +7,10 @@ from scipy import stats
 import matplotlib.pyplot as plt
 #1. 
 #get the clinical-gene.csv 
-cgdata=pd.read_csv("/Users/Penny/Desktop/dataset/ALL_P1/cgdata.csv")
+cgdata=pd.read_csv("/Users/Penny/Desktop/dataset/ALL_P1/cgdata.csv",low_memory=False) 
+cols = ['V{0}'.format(element) for element in range(1,21149)]
+prob_names=(cgdata.loc[2,cols]).values.tolist()
+gene_names=(cgdata.loc[0,cols]).values.tolist()
 cgdata=cgdata.dropna()  #drop NA reading get 207 patients data
 cgdata.shape #get the dimension of the cgdata 207*21154
 
@@ -50,7 +53,6 @@ merged_df['death']=merged_df['death'].astype(int)
 header=list(merged_df.columns.values) #to see the header of merged_df
 
 #transfer to numeric value 
-cols = ['V{0}'.format(element) for element in range(1,21149)]
 merged_df.loc[:,cols] = merged_df.loc[:,cols].apply(pd.to_numeric, errors='coerce', axis=1) 
 
 
