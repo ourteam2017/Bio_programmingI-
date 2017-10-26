@@ -13,11 +13,10 @@ from sklearn import preprocessing
 
 
 def f(train,threshold,test):
-    hi=h(train)
-    h_score=pd.DataFrame(hi, index=np.array(range(1,21149)))
-    gene_ls=h_score.index[h_score.iloc[:,0]>threshold].tolist()
-    candidate_genes=['V{0}'.format(element) for element in gene_ls]
-
+     hi=h(train,20)
+    h_score=pd.DataFrame(hi)
+    candidate_genes=h_score.index[h_score.iloc[:,0]>threshold].tolist()
+    
     # qualified genes were selected 
 
     stdsc = preprocessing.StandardScaler()
