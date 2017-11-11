@@ -1,60 +1,36 @@
-#this is the script to get the merged_df. To do stratified random sampling for  training/test sets see sampling_the_data.py
-
+# adjust clinical_gene.csv path.
 import pandas as pd
-import numpy as np
-import random
-from scipy import stats
-import matplotlib.pyplot as plt
-#1. 
-#get the clinical-gene.csv 
-cgdata=pd.read_csv("/Users/Penny/Desktop/dataset/ALL_P1/cgdata.csv",low_memory=False) 
-cols = ['V{0}'.format(element) for element in range(1,21149)]
-prob_names=(cgdata.loc[2,cols]).values.tolist()
-gene_names=(cgdata.loc[0,cols]).values.tolist()
-cgdata=cgdata.dropna()  #drop NA reading get 207 patients data
-cgdata.shape #get the dimension of the cgdata 207*21154
 
-#2. 
-#read the clinical data to see some features of the patients
-df=pd.read_excel("/Users/Penny/Desktop/dataset/ALL_P1/clinical.xlsx",sheetname="Clinical Data")
-#df contains 255 patients information
-some_values=cgdata['patient_id']
-sub_df=df.loc[df['TARGET USI'].isin(some_values)] #get subdataframe of df based on 'TARGET USI' ; this mainly contains clinical data
-#get the features of clinical data sub_df 
-print(sub_df.describe(include='all').transpose()) 
-print(sub_df['Race'].value_counts())
-print(sub_df['Ethnicity'].value_counts())
-print(sub_df['Vital Status'].value_counts())
+# Add this code to change the columns names to probes_names
+with open('clinical_gene.csv', 'r') as file:
+    wrong_col_names = file.readline().split('|')
+    gene_names = file.readline().split('|')
+    third_line = file.readline().split('|')
+    probes_names = file.readline().split('|')
 
-#3. 
-#merged_df, stands for new dataframe which isthe merged dataset we need to use, it contains vital staus 
-#
-merged_df=pd.merge(cgdata, sub_df[['TARGET USI','Vital Status','Age at Diagnosis in Days','MRD Day 29','WBC at Diagnosis']], left_on='patient_id',right_on='TARGET USI').drop('TARGET USI',1)
+# Create a dictionary with old columns as key and the probes names as the values.
+col_dictionary = dict(zip(wrong_col_names[13:], probes_names[13:]))
 
-#change the 'Age at diagnosis in days' to 'Age at diagnosis in years' 
-merged_df['Age at Diagnosis in Days']=merged_df['Age at Diagnosis in Days'].apply(lambda x: x/365)
-merged_df=merged_df.rename(columns = {'Age at Diagnosis in Days':'Age at Diagnosis in years'})
-merged_df['Age at Diagnosis in years']=[0 if ((x<=10) &(x>=1)) else 1 for x in merged_df['Age at Diagnosis in years']]
+# Create a dictionary Key = probe ; value = gene
+probe_gene_dic = dict(zip(probes_names[13:], gene_names[13:]))
 
-#change 'MRD Day 29' to 1 if it is positive; if it is not positive set the value equal 0
-merged_df['MRD Day 29']=[1 if x>0 else 0 for x in merged_df['MRD Day 29']] 
-#change the 'WBC at Diagnosis', if >5 assign 1 else 0
-merged_df['WBC at Diagnosis']=[1 if x>5 else 0 for x in merged_df['WBC at Diagnosis']]
+del third_line, probes_names, file, gene_names
 
 
-#assign new value 'death' to merged_df
-merged_df=merged_df.assign(death=pd.Series(np.ones(len(merged_df['patient_id']))))
-merged_df.loc[(merged_df['Vital Status']!='Dead'),'death']=0
-merged_df['death']=merged_df['death'].astype(int)
+# Some columns are float because pandas integer cant represent NA values
+clinical_gene_df = pd.read_csv('clinical_gene.csv',
+                            sep = '|',
+                            skiprows = 4,
+                            header = None,
+                            names = wrong_col_names)
+                            
+# Edit according to the data frame name
+clinical_gene_df.rename(columns= col_dictionary, inplace=True)
 
-
-#4. 
-#change the gene level V1-V21148 to numeric values 
-header=list(merged_df.columns.values) #to see the header of merged_df
-
-#transfer to numeric value 
-merged_df.loc[:,cols] = merged_df.loc[:,cols].apply(pd.to_numeric, errors='coerce', axis=1) 
-
+# Drop columns not required for the analysis
+# 1 = cel_file ; 2 = gender ; 5 = vital_status ; 6 = snc_teste_involve ; 7 = latino_black
+# 12 = B
+clinical_gene_df.drop(clinical_gene_df.columns[[1,2,5,6,7,12]], axis=1, inplace=True)
 
 
 
