@@ -24,7 +24,7 @@ clinical_gene_df = pd.read_csv('clinical_gene.csv',
                             header = None,
                             names = wrong_col_names)
                             
-# Edit according to the data frame name
+# Change names from V1 to probe names using a dictionary
 clinical_gene_df.rename(columns= col_dictionary, inplace=True)
 
 # Drop columns not required for the analysis
